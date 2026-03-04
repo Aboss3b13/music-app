@@ -1,0 +1,75 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build Debug APK
+      run: ./gradlew assembleDebug
+
+    - name: Build Release APK
+      run: ./gradlew assembleRelease
+
+    - name: Upload Debug APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: BeatForge-Studio-debug
+        path: app/build/outputs/apk/debug/*.apk
+
+    - name: Upload Release APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: BeatForge-Studio-release
+        path: app/build/outputs/apk/release/*.apk
+
+    - name: Create Release
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v1.0.${{ github.run_number }}
+        name: BeatForge Studio v1.0.${{ github.run_number }}
+        body: |
+          ## BeatForge Studio - Professional Music Production
+
+          ### What's included:
+          - 🎵 14 synthesized drum instruments
+          - 🎹 8 synth instruments including the unique Nebula Synth
+          - 🎚️ Full mixer with volume, pan, mute & solo
+          - 🎛️ Effects: Reverb, Delay, Distortion, Filter
+          - 📦 12 pre-built genre patterns (Hip-Hop, Trap, House, Techno, etc.)
+          - 🎤 WAV export for your finished tracks
+          - 🥁 Step sequencer with 16/32 steps
+          - 🎹 Virtual piano keyboard & drum pads
+
+          ### Download
+          Download the APK below and install on your Android device.
+        files: |
+          app/build/outputs/apk/release/*.apk
+          app/build/outputs/apk/debug/*.apk
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
