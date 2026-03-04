@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>BeatForge Studio</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -11,286 +11,197 @@
 <!-- Splash Screen -->
 <div id="splash-screen">
     <div class="splash-content">
-        <div class="splash-logo">
-            <div class="splash-waveform">
-                <span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span>
-            </div>
+        <div class="splash-waveform">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
         </div>
         <h1 class="splash-title">BeatForge<span>Studio</span></h1>
-        <p class="splash-subtitle">Professional Music Production</p>
+        <p class="splash-sub">Touch &bull; Create &bull; Produce</p>
         <button id="start-btn" class="glow-btn">TAP TO CREATE</button>
-        <p class="splash-hint">Audio engine requires user interaction to start</p>
     </div>
 </div>
 
 <!-- Main App -->
 <div id="app" class="hidden">
 
-    <!-- Transport Bar -->
+    <!-- Top Transport Bar -->
     <header id="transport">
-        <div class="transport-left">
-            <div class="logo-mini">BF<span>Studio</span></div>
-            <div class="bpm-control">
-                <button id="bpm-down" class="small-btn">−</button>
-                <div class="bpm-display">
-                    <input type="number" id="bpm-input" value="120" min="40" max="300">
-                    <label>BPM</label>
-                </div>
-                <button id="bpm-up" class="small-btn">+</button>
-            </div>
-            <div class="swing-control">
-                <input type="range" id="swing-amount" min="0" max="100" value="0" class="mini-slider">
-                <label>Swing</label>
-            </div>
+        <button id="stop-btn" class="t-btn" aria-label="Stop">
+            <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+        </button>
+        <button id="play-btn" class="t-btn play" aria-label="Play">
+            <svg viewBox="0 0 24 24" class="ico-play"><polygon points="7,4 21,12 7,20"/></svg>
+            <svg viewBox="0 0 24 24" class="ico-pause hidden"><rect x="5" y="4" width="5" height="16" rx="1"/><rect x="14" y="4" width="5" height="16" rx="1"/></svg>
+        </button>
+        <button id="record-btn" class="t-btn rec" aria-label="Record">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg>
+        </button>
+        <div class="bpm-box">
+            <button class="bpm-adj" id="bpm-down">−</button>
+            <input type="number" id="bpm-input" value="120" min="40" max="300">
+            <button class="bpm-adj" id="bpm-up">+</button>
         </div>
-
-        <div class="transport-center">
-            <button id="stop-btn" class="transport-btn" title="Stop">
-                <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
-            </button>
-            <button id="play-btn" class="transport-btn play" title="Play/Pause">
-                <svg viewBox="0 0 24 24" class="play-icon"><polygon points="6,4 20,12 6,20"/></svg>
-                <svg viewBox="0 0 24 24" class="pause-icon hidden"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg>
-            </button>
-            <button id="record-btn" class="transport-btn record" title="Record/Export">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/></svg>
-            </button>
-            <div class="step-display">
-                <span id="current-step">1</span> / <span id="total-steps">16</span>
-            </div>
-            <button id="metronome-btn" class="transport-btn small" title="Metronome">
-                <svg viewBox="0 0 24 24"><path d="M12 2L6 22h12L12 2zm0 5l3.5 13h-7L12 7z"/></svg>
-            </button>
-            <button id="loop-btn" class="transport-btn small active" title="Loop">
-                <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
-            </button>
-        </div>
-
-        <div class="transport-right">
-            <nav class="view-tabs">
-                <button class="tab active" data-view="sequencer">Sequencer</button>
-                <button class="tab" data-view="pads">Pads</button>
-                <button class="tab" data-view="keys">Keys</button>
-                <button class="tab" data-view="mixer">Mixer</button>
-            </nav>
-        </div>
+        <div class="step-ind"><span id="cur-step">1</span>/<span id="tot-steps">16</span></div>
+        <button id="metronome-btn" class="t-btn sm" aria-label="Metronome">♩</button>
+        <button id="fx-toggle" class="t-btn sm" aria-label="FX">FX</button>
     </header>
 
-    <!-- Main Content -->
-    <div id="main-content">
+    <!-- FX Drawer -->
+    <div id="fx-panel" class="fx-panel hidden">
+        <div class="fx-row">
+            <div class="fx-item"><label>Reverb</label><input type="range" id="fx-reverb" min="0" max="100" value="20"><span id="fx-reverb-val">20</span></div>
+            <div class="fx-item"><label>Delay</label><input type="range" id="fx-delay" min="0" max="100" value="0"><span id="fx-delay-val">0</span></div>
+            <div class="fx-item"><label>Distort</label><input type="range" id="fx-distortion" min="0" max="100" value="0"><span id="fx-distortion-val">0</span></div>
+        </div>
+        <div class="fx-row">
+            <div class="fx-item"><label>Filter</label><input type="range" id="fx-filter" min="100" max="20000" value="20000"><span id="fx-filter-val">20k</span></div>
+            <div class="fx-item"><label>Swing</label><input type="range" id="swing-amount" min="0" max="100" value="0"><span id="swing-val">0</span></div>
+            <div class="fx-item"><label>Master</label><input type="range" id="master-volume" min="0" max="100" value="80"><span id="master-vol-val">80</span></div>
+        </div>
+    </div>
 
-        <!-- Left Panel: Instruments & Patterns -->
-        <aside id="left-panel">
-            <div class="panel-section">
-                <h3 class="panel-title">Presets</h3>
-                <select id="pattern-preset" class="styled-select">
-                    <option value="">— Load Pattern —</option>
-                    <optgroup label="Hip-Hop">
-                        <option value="hiphop-boom">Boom Bap</option>
-                        <option value="hiphop-trap">Trap Beat</option>
-                        <option value="hiphop-lofi">Lo-Fi Chill</option>
-                    </optgroup>
-                    <optgroup label="Electronic">
-                        <option value="edm-house">House</option>
-                        <option value="edm-techno">Techno</option>
-                        <option value="edm-dubstep">Dubstep</option>
-                        <option value="edm-dnb">Drum & Bass</option>
-                        <option value="edm-trance">Trance</option>
-                    </optgroup>
-                    <optgroup label="World & Other">
-                        <option value="reggaeton">Reggaeton</option>
-                        <option value="afrobeats">Afrobeats</option>
-                        <option value="rock">Rock</option>
-                        <option value="jazz">Jazz Swing</option>
-                    </optgroup>
+    <!-- Content -->
+    <div id="content">
+
+        <!-- SEQUENCER -->
+        <section id="sequencer-view" class="view active">
+            <div class="seq-bar">
+                <select id="pattern-preset" class="sel">
+                    <option value="">Pattern…</option>
+                    <optgroup label="Hip-Hop"><option value="hiphop-boom">Boom Bap</option><option value="hiphop-trap">Trap</option><option value="hiphop-lofi">Lo-Fi</option></optgroup>
+                    <optgroup label="Electronic"><option value="edm-house">House</option><option value="edm-techno">Techno</option><option value="edm-dubstep">Dubstep</option><option value="edm-dnb">D&amp;B</option><option value="edm-trance">Trance</option></optgroup>
+                    <optgroup label="World"><option value="reggaeton">Reggaeton</option><option value="afrobeats">Afrobeats</option><option value="rock">Rock</option><option value="jazz">Jazz</option></optgroup>
+                </select>
+                <div class="step-btns">
+                    <button class="step-cnt active" data-steps="16">16</button>
+                    <button class="step-cnt" data-steps="32">32</button>
+                </div>
+                <button id="clear-seq" class="sm-btn">Clear</button>
+            </div>
+            <div class="seq-scroll"><div id="seq-grid" class="seq-grid"></div></div>
+        </section>
+
+        <!-- PADS -->
+        <section id="pads-view" class="view hidden">
+            <div class="pads-bar">
+                <div class="bank-scroll">
+                    <button class="bank active" data-bank="drums">Drums</button>
+                    <button class="bank" data-bank="bass">Bass</button>
+                    <button class="bank" data-bank="synth">Synth</button>
+                    <button class="bank" data-bank="nebula">Nebula</button>
+                    <button class="bank" data-bank="808">808</button>
+                    <button class="bank" data-bank="world">World</button>
+                </div>
+            </div>
+            <div id="pad-grid" class="pad-grid"></div>
+            <div class="pad-info"><span id="pad-name">Tap a pad</span></div>
+        </section>
+
+        <!-- KEYS -->
+        <section id="keys-view" class="view hidden">
+            <div class="keys-bar">
+                <select id="keys-inst" class="sel">
+                    <option value="piano">Piano</option>
+                    <option value="epiano">E-Piano</option>
+                    <option value="bass">Bass</option>
+                    <option value="lead">Lead</option>
+                    <option value="pad">Pad</option>
+                    <option value="strings">Strings</option>
+                    <option value="pluck">Pluck</option>
+                    <option value="organ">Organ</option>
+                    <option value="marimba">Marimba</option>
+                    <option value="acid">Acid 303</option>
+                    <option value="nebula">Nebula</option>
+                </select>
+                <div class="oct-ctrl">
+                    <button id="oct-down" class="icon-btn">◀</button>
+                    <span id="oct-disp">4</span>
+                    <button id="oct-up" class="icon-btn">▶</button>
+                </div>
+            </div>
+            <div id="piano-kb" class="piano-kb"></div>
+        </section>
+
+        <!-- TOUCH INSTRUMENTS -->
+        <section id="touch-view" class="view hidden">
+            <div class="touch-bar">
+                <div class="touch-modes">
+                    <button class="tmode active" data-mode="xy">XY Pad</button>
+                    <button class="tmode" data-mode="ribbon">Ribbon</button>
+                    <button class="tmode" data-mode="strings">Strings</button>
+                    <button class="tmode" data-mode="orbital">Orbital</button>
+                </div>
+                <select id="touch-inst" class="sel sel-sm">
+                    <option value="lead">Lead</option>
+                    <option value="pad">Pad</option>
+                    <option value="nebula">Nebula</option>
+                    <option value="bass">Bass</option>
+                    <option value="pluck">Pluck</option>
+                    <option value="acid">Acid</option>
+                </select>
+                <select id="touch-scale" class="sel sel-sm">
+                    <option value="chromatic">Chromatic</option>
+                    <option value="major">Major</option>
+                    <option value="minor">Minor</option>
+                    <option value="pentatonic">Penta</option>
+                    <option value="blues">Blues</option>
+                    <option value="arabic">Arabic</option>
                 </select>
             </div>
+            <div id="touch-surface" class="touch-surface">
+                <canvas id="touch-canvas"></canvas>
+            </div>
+        </section>
 
-            <div class="panel-section">
-                <h3 class="panel-title">Steps</h3>
-                <div class="steps-selector">
-                    <button class="step-count" data-steps="16">16</button>
-                    <button class="step-count active" data-steps="16">16</button>
-                    <button class="step-count" data-steps="32">32</button>
+        <!-- MIX -->
+        <section id="mix-view" class="view hidden">
+            <div class="mix-bar">
+                <button class="mix-tab active" data-mode="tracks">Tracks</button>
+                <button class="mix-tab" data-mode="mixer">Mixer</button>
+                <button id="export-btn" class="sm-btn accent">Export</button>
+            </div>
+            <div id="mt-area" class="mt-area active">
+                <div id="mt-tracks"></div>
+                <div id="mt-empty" class="mt-empty">
+                    <div class="mt-empty-icon">🎙️</div>
+                    <p>Hit <b>Record</b> then play any instrument</p>
+                    <p class="sub">Your performance appears here as a track</p>
                 </div>
             </div>
-
-            <div class="panel-section">
-                <h3 class="panel-title">Instruments</h3>
-                <div id="instrument-list" class="instrument-browser">
-                    <!-- Populated by JS -->
-                </div>
+            <div id="mixer-area" class="mixer-area hidden">
+                <div id="mixer-ch"></div>
             </div>
-
-            <div class="panel-section">
-                <h3 class="panel-title">Export</h3>
-                <button id="export-wav" class="action-btn">
-                    <span class="btn-icon">💾</span> Export WAV
-                </button>
-                <button id="export-share" class="action-btn secondary">
-                    <span class="btn-icon">📤</span> Share
-                </button>
-            </div>
-        </aside>
-
-        <!-- Workspace -->
-        <main id="workspace">
-
-            <!-- Sequencer View -->
-            <section id="sequencer-view" class="view active">
-                <div class="sequencer-header">
-                    <div class="seq-track-label">Track</div>
-                    <div class="seq-steps-header" id="steps-header">
-                        <!-- Step numbers populated by JS -->
-                    </div>
-                    <div class="seq-controls-label">Vol</div>
-                </div>
-                <div id="sequencer-grid" class="sequencer-grid">
-                    <!-- Populated by JS -->
-                </div>
-                <div id="playhead-indicator" class="playhead-bar">
-                    <!-- Animated playhead -->
-                </div>
-            </section>
-
-            <!-- Pads View -->
-            <section id="pads-view" class="view hidden">
-                <div class="pads-container">
-                    <div class="pad-bank-selector">
-                        <button class="pad-bank active" data-bank="drums">Drums</button>
-                        <button class="pad-bank" data-bank="bass">Bass</button>
-                        <button class="pad-bank" data-bank="synth">Synth</button>
-                        <button class="pad-bank" data-bank="nebula">Nebula</button>
-                    </div>
-                    <div id="pad-grid" class="pad-grid">
-                        <!-- 4x4 Pads populated by JS -->
-                    </div>
-                    <div class="pad-info">
-                        <span id="pad-current-name">Tap a pad</span>
-                        <div class="pad-velocity-display">
-                            <div id="pad-velocity-bar" class="velocity-bar"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Keys View -->
-            <section id="keys-view" class="view hidden">
-                <div class="keys-controls">
-                    <select id="keys-instrument" class="styled-select">
-                        <option value="piano">Piano</option>
-                        <option value="epiano">Electric Piano</option>
-                        <option value="bass">Bass Synth</option>
-                        <option value="lead">Lead Synth</option>
-                        <option value="pad">Pad</option>
-                        <option value="strings">Strings</option>
-                        <option value="pluck">Pluck</option>
-                        <option value="nebula">✨ Nebula Synth</option>
-                    </select>
-                    <div class="octave-control">
-                        <button id="octave-down" class="small-btn">◀</button>
-                        <span>Octave <strong id="octave-display">4</strong></span>
-                        <button id="octave-up" class="small-btn">▶</button>
-                    </div>
-                </div>
-                <div id="piano-keyboard" class="piano-keyboard">
-                    <!-- Generated by JS -->
-                </div>
-            </section>
-
-            <!-- Mixer View -->
-            <section id="mixer-view" class="view hidden">
-                <div id="mixer-channels" class="mixer-channels">
-                    <!-- Generated by JS -->
-                </div>
-            </section>
-
-        </main>
-
-        <!-- Right Panel: Effects -->
-        <aside id="right-panel">
-            <div class="panel-section">
-                <h3 class="panel-title">Master FX</h3>
-                <div class="fx-control">
-                    <label>Reverb</label>
-                    <input type="range" id="fx-reverb" min="0" max="100" value="20" class="fx-slider">
-                    <span class="fx-value" id="fx-reverb-val">20%</span>
-                </div>
-                <div class="fx-control">
-                    <label>Delay</label>
-                    <input type="range" id="fx-delay" min="0" max="100" value="0" class="fx-slider">
-                    <span class="fx-value" id="fx-delay-val">0%</span>
-                </div>
-                <div class="fx-control">
-                    <label>Distortion</label>
-                    <input type="range" id="fx-distortion" min="0" max="100" value="0" class="fx-slider">
-                    <span class="fx-value" id="fx-distortion-val">0%</span>
-                </div>
-                <div class="fx-control">
-                    <label>Filter</label>
-                    <input type="range" id="fx-filter" min="100" max="20000" value="20000" class="fx-slider">
-                    <span class="fx-value" id="fx-filter-val">20k</span>
-                </div>
-                <div class="fx-control">
-                    <label>Resonance</label>
-                    <input type="range" id="fx-resonance" min="0" max="30" value="0" step="0.5" class="fx-slider">
-                    <span class="fx-value" id="fx-resonance-val">0</span>
-                </div>
-            </div>
-
-            <div class="panel-section">
-                <h3 class="panel-title">Master</h3>
-                <div class="master-meter">
-                    <canvas id="master-visualizer" width="200" height="100"></canvas>
-                </div>
-                <div class="fx-control">
-                    <label>Volume</label>
-                    <input type="range" id="master-volume" min="0" max="100" value="80" class="fx-slider master">
-                    <span class="fx-value" id="master-vol-val">80%</span>
-                </div>
-            </div>
-        </aside>
+        </section>
 
     </div>
 
-    <!-- Bottom Visualizer Bar -->
-    <footer id="bottom-bar">
-        <canvas id="waveform-visualizer" height="40"></canvas>
-    </footer>
+    <!-- Bottom Nav -->
+    <nav id="nav">
+        <button class="nav-btn active" data-view="sequencer"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Beats</span></button>
+        <button class="nav-btn" data-view="pads"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="9" height="9" rx="2"/><rect x="13" y="2" width="9" height="9" rx="2"/><rect x="2" y="13" width="9" height="9" rx="2"/><rect x="13" y="13" width="9" height="9" rx="2"/></svg><span>Pads</span></button>
+        <button class="nav-btn" data-view="keys"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="3" height="16" rx="1"/><rect x="7" y="4" width="3" height="16" rx="1"/><rect x="11" y="4" width="3" height="16" rx="1"/><rect x="15" y="4" width="3" height="16" rx="1"/><rect x="19" y="4" width="3" height="16" rx="1"/></svg><span>Keys</span></button>
+        <button class="nav-btn" data-view="touch"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3"/></svg><span>Touch</span></button>
+        <button class="nav-btn" data-view="mix"><svg viewBox="0 0 24 24"><rect x="4" y="12" width="3" height="9" rx="1"/><rect x="9" y="7" width="3" height="14" rx="1"/><rect x="14" y="10" width="3" height="11" rx="1"/><rect x="19" y="4" width="3" height="17" rx="1"/></svg><span>Mix</span></button>
+    </nav>
 
 </div>
 
 <!-- Export Dialog -->
 <div id="export-dialog" class="dialog-overlay hidden">
     <div class="dialog">
-        <h2>Export Your Track</h2>
-        <div class="export-options">
-            <div class="export-option">
-                <label>Format</label>
-                <select id="export-format" class="styled-select">
-                    <option value="wav">WAV (Lossless)</option>
-                    <option value="mp3">MP3 (Compressed)</option>
-                </select>
-            </div>
-            <div class="export-option">
-                <label>Duration (loops)</label>
-                <input type="number" id="export-loops" value="4" min="1" max="32" class="styled-input">
-            </div>
-            <div class="export-option">
-                <label>Filename</label>
-                <input type="text" id="export-filename" value="beatforge-track" class="styled-input">
-            </div>
+        <h2>Export Track</h2>
+        <div class="fields">
+            <div class="field"><label>Format</label><select id="export-format" class="sel"><option value="wav">WAV</option></select></div>
+            <div class="field"><label>Loops</label><input type="number" id="export-loops" value="4" min="1" max="32" class="inp"></div>
+            <div class="field"><label>Name</label><input type="text" id="export-filename" value="beatforge-track" class="inp"></div>
         </div>
-        <div id="export-progress" class="export-progress hidden">
-            <div class="progress-bar">
-                <div id="progress-fill" class="progress-fill"></div>
-            </div>
-            <span id="progress-text">Rendering...</span>
+        <div id="export-progress" class="progress hidden">
+            <div class="pbar"><div id="progress-fill" class="pfill"></div></div>
+            <span id="progress-text">Rendering…</span>
         </div>
-        <div class="dialog-actions">
-            <button id="export-cancel" class="action-btn secondary">Cancel</button>
-            <button id="export-confirm" class="action-btn">Export</button>
+        <div class="dlg-btns">
+            <button id="export-cancel" class="btn ghost">Cancel</button>
+            <button id="export-confirm" class="btn primary">Export</button>
         </div>
     </div>
 </div>
@@ -299,6 +210,8 @@
 <script src="js/instruments.js"></script>
 <script src="js/patterns.js"></script>
 <script src="js/sequencer.js"></script>
+<script src="js/touch-instruments.js"></script>
+<script src="js/multitrack.js"></script>
 <script src="js/mixer.js"></script>
 <script src="js/recorder.js"></script>
 <script src="js/app.js"></script>
